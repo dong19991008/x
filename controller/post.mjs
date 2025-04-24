@@ -33,9 +33,9 @@ export async function updatePost(req, res, next) {
   const text = req.body.text;
   const post = await postRepository.update(id, text);
   if (post) {
-    res.status(201).join(post);
+    res.status(201).json(post);
   } else {
-    res.status(404).json({ message: `${id}의 포스트가 없습니다` });
+    res.status(404).json({ message: `${id}의 포스트가 없습니다.` });
   }
 }
 
