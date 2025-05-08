@@ -21,7 +21,7 @@ const validateLogin = [
 const validateSignup = [
   ...validateLogin,
   body("name").trim().notEmpty().withMessage("name을 입력"),
-  body("email").trim().isEmail().withMessage("이미일 형식 확인"),
+  body("email").trim().isEmail().withMessage("이메일 형식 확인"),
   validate,
 ];
 

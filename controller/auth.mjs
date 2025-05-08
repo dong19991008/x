@@ -7,12 +7,12 @@ const secretKey = config.jwt.secretKey;
 const bcryptSaltRounds = config.bcrypt.saltRounds;
 const jwtExpiresInDays = config.jwt.expiresInSec;
 
-async function createJwtToken(id) {
-  return jwt.sign({ id }, secretKey, { expiresIn: jwtExpiresInDays });
+async function createJwtToken(idx) {
+  return jwt.sign({ idx }, secretKey, { expiresIn: jwtExpiresInDays });
 }
 
 export async function signup(req, res, next) {
-  const { userid, password, name, email } = req.body;
+  const { userid, password, name, email, url } = req.body;
 
   //회원 중복체크
   const found = await authRepository.findByUserid(userid);
@@ -22,7 +22,13 @@ export async function signup(req, res, next) {
 
   //비밀번호 해쉬
   const hashed = bcrypt.hashSync(password, bcryptSaltRounds);
-  const users = await authRepository.createUser(userid, hashed, name, email);
+  const users = await authRepository.createUser({
+    userid,
+    password: hashed,
+    name,
+    email,
+    url,
+  });
   const token = await createJwtToken(users.id);
   console.log(token);
   if (users) {
@@ -41,7 +47,7 @@ export async function login(req, res, next) {
     return res.status(401).json({ message: "아이디 또는 비밀번호 확인" });
   }
 
-  const token = await createJwtToken(user.id);
+  const token = await createJwtToken(user.idx);
   res.status(200).json({ token, userid });
 }
 
